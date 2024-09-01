@@ -1,4 +1,4 @@
-package de.iu.tftradio.ui.theme
+package de.iu.tftradio.presentation.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

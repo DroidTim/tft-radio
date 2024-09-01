@@ -1,4 +1,4 @@
-package de.iu.tftradio.ui.theme
+package de.iu.tftradio.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
