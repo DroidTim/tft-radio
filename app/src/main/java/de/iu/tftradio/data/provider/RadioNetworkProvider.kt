@@ -3,8 +3,8 @@ package de.iu.tftradio.data.provider
 
 import de.iu.tftradio.data.api.ApiService
 import de.iu.tftradio.data.error.NetworkException
+import de.iu.tftradio.data.model.PlaylistDto
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -39,8 +39,7 @@ internal class RadioNetworkProvider {
         }
     }
 
-    //Todo call the api and get Response<DataModel>
-    suspend fun get(): Response<ResponseBody> {
-        return retrofitInstance.get("")
+    suspend fun get(): Response<PlaylistDto> {
+        return retrofitInstance.get("/playlist")
     }
 }
