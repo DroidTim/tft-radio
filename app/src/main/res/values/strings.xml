@@ -3,4 +3,5 @@
     <string name="error_message">Es ist ein Fehler aufgetreten</string>
     <string name="check_network_message">Bitte überprüfen Sie die Netzwerkverbindung</string>
     <string name="error_Image">Error Image</string>
+    <string name="try_again_message">Versuchen Sie es später nocheinmal</string>
 </resources>
