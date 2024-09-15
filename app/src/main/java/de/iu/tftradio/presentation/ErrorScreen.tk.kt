@@ -24,7 +24,7 @@ fun ErrorScreen(exception: Throwable) {
     val errorImage: Painter
 
     when (exception) {
-        is IOException -> {
+        is IOException  -> {
             errorImage = painterResource(id = R.drawable.ic_error)
             errorMessage = stringResource(id = R.string.check_network_message)
         }
@@ -76,15 +76,13 @@ fun ErrorScreen(exception: Throwable) {
             )
             when (exception.localizedMessage) {
                 is String -> {
+                    //Description
                     Text(
                         text = exception.localizedMessage as String,
                         fontSize = 10.sp,
                         color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
                         textAlign = TextAlign.Center
                     )
-
-                }
-                else -> {
 
                 }
             }
