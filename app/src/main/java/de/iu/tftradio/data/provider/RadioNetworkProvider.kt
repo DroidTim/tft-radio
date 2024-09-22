@@ -5,6 +5,7 @@ import de.iu.tftradio.data.api.ApiService
 import de.iu.tftradio.data.error.NetworkException
 import de.iu.tftradio.data.model.PlaylistDto
 import okhttp3.OkHttpClient
+import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
@@ -39,7 +40,11 @@ internal class RadioNetworkProvider {
         }
     }
 
-    suspend fun get(): Response<PlaylistDto> {
-        return retrofitInstance.get("/playlist")
+    suspend fun getPlaylist(): Response<PlaylistDto> {
+        return retrofitInstance.getPlaylist(url = "/playlist")
+    }
+
+    suspend fun postSongFavorite(songIdentifier: String): Response<ResponseBody> {
+        return retrofitInstance.postSongFavorite(url = "/songFavorite", body = songIdentifier)
     }
 }

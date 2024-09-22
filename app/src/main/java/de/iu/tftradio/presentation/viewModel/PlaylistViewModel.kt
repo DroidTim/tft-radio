@@ -1,5 +1,8 @@
 package de.iu.tftradio.presentation.viewModel
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.iu.tftradio.data.model.PlaylistDto
@@ -15,14 +18,28 @@ internal class PlaylistViewModel: ViewModel() {
 
     private val repository = PlaylistRepository()
 
+    var errorDialog: Boolean by mutableStateOf(false)
+
     fun loadPlaylist() {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 repository.getPlaylist()
+            }.onSuccess { playListDto ->
+                _uiState.value = UiState.Success(playlistDto = playListDto)
+            }.onFailure { error ->
+                _uiState.value = UiState.Failure(exception = error)
+            }
+        }
+    }
+
+    fun setSongFavorite(songIdentifier: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                repository.postSongFavorite(songIdentifier = songIdentifier)
             }.onSuccess {
-                _uiState.value = UiState.Success(playlistDto = it)
+                repository.getPlaylist(clearCache = true)
             }.onFailure {
-                _uiState.value = UiState.Failure(exception = it)
+                errorDialog = true
             }
         }
     }

@@ -11,9 +11,15 @@ internal class PlaylistRepository {
     private val radioMemoryProvider = RadioMemoryProvider()
 
     @Throws(NetworkErrorException::class)
-    suspend fun getPlaylist(): PlaylistDto {
+    suspend fun getPlaylist(clearCache: Boolean = false): PlaylistDto {
+        if (clearCache) radioMemoryProvider.clean()
         return radioMemoryProvider.retrieve() ?: radioMemoryProvider.cacheAndRetrieve(
-            playlistDto = radioNetworkProvider.get().body() ?: throw NetworkErrorException()
+            playlistDto = radioNetworkProvider.getPlaylist().body() ?: throw NetworkErrorException()
         )
+    }
+
+    @Throws(NetworkErrorException::class)
+    suspend fun postSongFavorite(songIdentifier: String) {
+        takeIf { radioNetworkProvider.postSongFavorite(songIdentifier = songIdentifier).isSuccessful } ?: throw NetworkErrorException()
     }
 }

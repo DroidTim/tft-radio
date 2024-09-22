@@ -12,6 +12,7 @@ data class PlaylistDto(
 
 @JsonIgnoreProperties
 data class PlaylistItemDto(
+    @JsonProperty("identifier") val identifier: String,
     @JsonProperty("picture") val pictureSource: String,
     @JsonProperty("title") val title: String,
     @JsonProperty("album") val album: String,

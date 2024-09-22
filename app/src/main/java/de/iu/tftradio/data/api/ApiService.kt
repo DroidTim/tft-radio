@@ -10,13 +10,13 @@ import retrofit2.http.Url
 
 interface ApiService {
     @POST
-    suspend fun post(
+    suspend fun postSongFavorite(
         @Url url: String,
-        @Body body: Unit //Data model
+        @Body body: String
     ): Response<ResponseBody>
 
     @GET
-    suspend fun get(
+    suspend fun getPlaylist(
         @Url url: String
     ): Response<PlaylistDto>
 }
