@@ -40,6 +40,9 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
     Box(
         modifier = modifier.fillMaxSize()
     ) {
+        if(viewModel.errorDialog) {
+            //Fehlerdialog
+        }
         when (val state = viewModel.uiState.collectAsState().value) {
             UiState.Loading -> CircularProgressIndicator(modifier = Modifier
                 .fillMaxSize()
@@ -83,7 +86,9 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
                                 favoriteCount = playlistItem.favoriteCount,
                                 isOnTrack = playlistItem.onTrack,
                                 isFavorite = false,
-                                onFavorite = {}
+                                onFavorite = {
+                                    viewModel.setSongFavorite(songIdentifier = playlistItem.identifier)
+                                }
                             )
                     }
                 }
