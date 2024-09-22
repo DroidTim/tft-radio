@@ -92,6 +92,9 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
             is UiState.Failure -> {
                 ErrorScreen(
                     exception = state.exception,
+                    onRetry = {
+                        viewModel.loadPlaylist()
+                    }
                 )
             }
         }
