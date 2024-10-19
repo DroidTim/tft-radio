@@ -1,8 +1,14 @@
 <resources>
-    <string name="app_name">tft.radio</string>
+    <string name="app_name">tft radio</string>
     <string name="error_message">Es ist ein Fehler aufgetreten</string>
     <string name="check_network_message">Bitte überprüfen Sie die Netzwerkverbindung</string>
     <string name="error_Image">Error Image</string>
     <string name="try_again_message">Versuchen Sie es später nocheinmal</string>
     <string name="retry_button_text">Erneut Versuchen</string>
+    <string name="title_dialog_moderator_feedback">Ihr Feedback</string>
+    <string name="cancel_button">Abbrechen</string>
+    <string name="confirm_button">Übernehmen</string>
+    <string name="title_error_dialog">Aktion nicht möglich</string>
+    <string name="label_error_dialog">Aktion konnte nicht ausgeführt werden.\nBitte versuchen Sie es nochmal.</string>
+    <string name="ok_button">OK</string>
 </resources>

@@ -4,10 +4,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,6 +44,24 @@ class MainActivity : ComponentActivity() {
                                     Text(text = stringResource(id = R.string.app_name))
                                 }
                             )
+                        },
+                        bottomBar = {
+                            NavigationBar {
+                                NavigationBarItem(
+                                    selected = false,
+                                    onClick = { /*TODO*/ },
+                                    icon = {
+                                        Image(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = "Playlist")
+                                    }
+                                )
+                                NavigationBarItem(
+                                    selected = false,
+                                    onClick = { /*TODO*/ },
+                                    icon = {
+                                        Image(imageVector = Icons.Default.Feedback, contentDescription = "Feedback")
+                                    }
+                                )
+                            }
                         }
                     ) { innerPadding ->
                         PlayList(viewModel = viewModel(), modifier = Modifier.padding(innerPadding))

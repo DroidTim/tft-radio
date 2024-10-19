@@ -3,12 +3,13 @@ package de.iu.tftradio.data.provider
 
 import de.iu.tftradio.data.api.ApiService
 import de.iu.tftradio.data.error.NetworkException
+import de.iu.tftradio.data.model.ModeratorFeedbackStars
 import de.iu.tftradio.data.model.PlaylistDto
 import okhttp3.OkHttpClient
-import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.util.concurrent.TimeUnit
 import kotlin.jvm.Throws
 
 internal class RadioNetworkProvider {
@@ -23,6 +24,7 @@ internal class RadioNetworkProvider {
         val baseUrl = "https://tft-radio.resources"
         try {
             val client = OkHttpClient.Builder()
+                .connectTimeout(5, TimeUnit.SECONDS)
                 .addInterceptor { chain ->
                     val original = chain.request()
                     val requestBuilder = original.newBuilder()
@@ -44,7 +46,11 @@ internal class RadioNetworkProvider {
         return retrofitInstance.getPlaylist(url = "/playlist")
     }
 
-    suspend fun postSongFavorite(songIdentifier: String): Response<ResponseBody> {
+    suspend fun postSongFavorite(songIdentifier: String): Response<Unit> {
         return retrofitInstance.postSongFavorite(url = "/songFavorite", body = songIdentifier)
+    }
+
+    suspend fun postModeratorFeedback(moderatorFeedbackStars: ModeratorFeedbackStars): Response<Unit> {
+        return retrofitInstance.postModeratorStars(url = "/moderatorFeedback", body = moderatorFeedbackStars)
     }
 }

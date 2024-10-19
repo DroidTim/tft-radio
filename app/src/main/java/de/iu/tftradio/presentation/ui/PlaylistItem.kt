@@ -117,7 +117,6 @@ fun Favorite(
                 modifier = modifier
             )
         }
-
         Text(text = favoriteCount.toString(), style = MaterialTheme.typography.bodySmall)
     }
     
