@@ -4,14 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import com.fasterxml.jackson.annotation.JsonProperty
 
 @JsonIgnoreProperties
-data class PlaylistDto(
+internal data class PlaylistDto(
     @JsonProperty("moderator") val moderator: Moderator,
     @JsonProperty("playlist") val playlist: List<PlaylistItemDto>
 )
 
 
 @JsonIgnoreProperties
-data class PlaylistItemDto(
+internal data class PlaylistItemDto(
     @JsonProperty("identifier") val identifier: String,
     @JsonProperty("picture") val pictureSource: String,
     @JsonProperty("title") val title: String,
@@ -22,7 +22,7 @@ data class PlaylistItemDto(
 )
 
 @JsonIgnoreProperties
-data class Moderator(
+internal data class Moderator(
     @JsonProperty("identifier") val identifier: String,
     @JsonProperty("name") val name: String,
     @JsonProperty("stars") val stars: Int,
@@ -30,13 +30,14 @@ data class Moderator(
 )
 
 @JsonIgnoreProperties
-data class ModeratorFeedbackStars(
+internal data class ModeratorFeedbackStars(
     @JsonProperty("identifier") val identifier: String,
-    @JsonProperty("stars") val stars: Int
+    @JsonProperty("stars") val stars: Int,
+    @JsonProperty("comment") val comment: String
 )
 
 @JsonIgnoreProperties
-enum class Trend {
+internal enum class Trend {
     @JsonProperty POSITIV,
     @JsonProperty NEGATIV,
     @JsonProperty EQUAL

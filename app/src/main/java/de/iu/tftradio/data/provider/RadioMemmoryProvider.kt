@@ -1,16 +1,14 @@
 package de.iu.tftradio.data.provider
 
-import de.iu.tftradio.data.model.PlaylistDto
+internal class RadioMemoryProvider<T> {
+    private var cache: T? = null
 
-internal class RadioMemoryProvider {
-    private var cache: PlaylistDto? = null
-
-    fun cacheAndRetrieve(playlistDto: PlaylistDto): PlaylistDto {
-        cache = playlistDto
-        return playlistDto
+    fun cacheAndRetrieve(data: T): T {
+        cache = data
+        return data
     }
 
-    fun retrieve(): PlaylistDto? {
+    fun retrieve(): T? {
         return cache
     }
 

@@ -9,7 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Feedback
+import androidx.compose.material.icons.filled.QueuePlayNext
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -18,12 +18,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.res.stringResource
 import de.iu.tftradio.R
+import de.iu.tftradio.presentation.model.Tab
 import de.iu.tftradio.presentation.theme.TftradioTheme
 import de.iu.tftradio.presentation.ui.PlayList
+import de.iu.tftradio.presentation.ui.SongRequest
 
 class MainActivity : ComponentActivity() {
 
@@ -32,6 +38,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+            var tab by rememberSaveable { mutableStateOf(Tab.SONG_LIST) }
             TftradioTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -49,25 +56,33 @@ class MainActivity : ComponentActivity() {
                             NavigationBar {
                                 NavigationBarItem(
                                     selected = false,
-                                    onClick = { /*TODO*/ },
+                                    onClick = {
+                                        tab = Tab.SONG_LIST
+                                    },
                                     icon = {
                                         Image(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = "Playlist")
                                     }
                                 )
                                 NavigationBarItem(
                                     selected = false,
-                                    onClick = { /*TODO*/ },
+                                    onClick = {
+                                        tab = Tab.SONG_REQUEST
+                                    },
                                     icon = {
-                                        Image(imageVector = Icons.Default.Feedback, contentDescription = "Feedback")
+                                        Image(imageVector = Icons.Default.QueuePlayNext, contentDescription = "Feedback")
                                     }
                                 )
                             }
                         }
                     ) { innerPadding ->
-                        PlayList(viewModel = viewModel(), modifier = Modifier.padding(innerPadding))
+                        when(tab) {
+                            Tab.SONG_LIST -> PlayList(playlistViewModel = viewModel(), moderatorFeedbackViewModel = viewModel(), modifier = Modifier.padding(innerPadding))
+                            Tab.SONG_REQUEST -> SongRequest(songRequestViewModel = viewModel(), modifier = Modifier.padding(innerPadding))
+                        }
                     }
                 }
             }
         }
     }
+
 }

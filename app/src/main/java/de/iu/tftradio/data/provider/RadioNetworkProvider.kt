@@ -3,6 +3,7 @@ package de.iu.tftradio.data.provider
 
 import de.iu.tftradio.data.api.ApiService
 import de.iu.tftradio.data.error.NetworkException
+import de.iu.tftradio.data.model.ModeratorFeedback
 import de.iu.tftradio.data.model.ModeratorFeedbackStars
 import de.iu.tftradio.data.model.PlaylistDto
 import okhttp3.OkHttpClient
@@ -44,6 +45,10 @@ internal class RadioNetworkProvider {
 
     suspend fun getPlaylist(): Response<PlaylistDto> {
         return retrofitInstance.getPlaylist(url = "/playlist")
+    }
+
+    suspend fun getModeratorFeedbackList(): Response<List<ModeratorFeedback>> {
+        return retrofitInstance.getModeratorFeedbackList(url = "/moderatorFeedbackList")
     }
 
     suspend fun postSongFavorite(songIdentifier: String): Response<Unit> {

@@ -1,5 +1,6 @@
 package de.iu.tftradio.data.api
 
+import de.iu.tftradio.data.model.ModeratorFeedback
 import de.iu.tftradio.data.model.ModeratorFeedbackStars
 import de.iu.tftradio.data.model.PlaylistDto
 import retrofit2.Response
@@ -8,7 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Url
 
-interface ApiService {
+internal interface ApiService {
     @POST
     suspend fun postSongFavorite(
         @Url url: String,
@@ -25,4 +26,9 @@ interface ApiService {
     suspend fun getPlaylist(
         @Url url: String
     ): Response<PlaylistDto>
+
+    @GET
+    suspend fun getModeratorFeedbackList(
+        @Url url: String
+    ): Response<List<ModeratorFeedback>>
 }

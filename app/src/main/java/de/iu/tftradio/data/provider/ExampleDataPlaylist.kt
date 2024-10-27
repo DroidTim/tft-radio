@@ -3,9 +3,10 @@ package de.iu.tftradio.data.provider
 import de.iu.tftradio.data.model.Moderator
 import de.iu.tftradio.data.model.PlaylistDto
 import de.iu.tftradio.data.model.PlaylistItemDto
+import de.iu.tftradio.data.model.ModeratorFeedback
 import de.iu.tftradio.data.model.Trend
 
-data class ExampleData(
+internal data class ExampleDataPlaylist(
     val playlist: PlaylistDto = PlaylistDto(
         moderator = Moderator(
             identifier = "8974343d293",
@@ -68,6 +69,23 @@ data class ExampleData(
                 onTrack = false,
                 favoriteCount = 90
             )
+        )
+    )
+)
+
+internal data class ExampleDataModeratorFeedback(
+    val moderatorFeedbackList: List<ModeratorFeedback> = listOf(
+        ModeratorFeedback(
+            rating = 4,
+            comment = "Super Moderator"
+        ),
+        ModeratorFeedback(
+            rating = 2,
+            comment = "Super Moderator"
+        ),
+        ModeratorFeedback(
+            rating = 1,
+            comment = "Super Moderator"
         )
     )
 )

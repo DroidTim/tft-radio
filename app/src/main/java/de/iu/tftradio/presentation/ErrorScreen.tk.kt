@@ -19,7 +19,7 @@ import de.iu.tftradio.R
 import java.io.IOException
 
 @Composable
-fun ErrorScreen(exception: Throwable, onRetry: () -> Unit) {
+internal fun ErrorScreen(exception: Throwable, onRetry: () -> Unit) {
     val errorMessage: String
     val errorImage: Painter
 

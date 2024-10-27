@@ -87,14 +87,14 @@ internal fun PlaylistItem(
 }
 
 @Composable
-fun OnTrack(modifier: Modifier = Modifier) {
+private fun OnTrack(modifier: Modifier = Modifier) {
     Box(modifier = modifier
         .size(30.dp)
         .clip(CircleShape)
         .background(color = MaterialTheme.colorScheme.primary))
 }
 @Composable
-fun Favorite(
+private fun Favorite(
     favoriteCount: Int,
     isFavorite: Boolean,
     onFavorite: () -> Unit
@@ -123,22 +123,22 @@ fun Favorite(
 }
 
 @Composable
-fun Album(text: String, modifier: Modifier) {
+private fun Album(text: String, modifier: Modifier) {
     Text(text = text, style = MaterialTheme.typography.bodyLarge, modifier = modifier)
 }
 
 @Composable
-fun Title(text: String, modifier: Modifier) {
+private fun Title(text: String, modifier: Modifier) {
     Text(text = text, style = MaterialTheme.typography.headlineMedium, modifier = modifier)
 }
 
 @Composable
-fun Interpret(text: String, modifier: Modifier) {
+private fun Interpret(text: String, modifier: Modifier) {
     Text(text = text, style = MaterialTheme.typography.bodyLarge, modifier = modifier)
 }
 
 @Composable
-fun SongCover(url: String) {
+private fun SongCover(url: String) {
     AsyncImage(
         model = url,
         contentDescription = null,

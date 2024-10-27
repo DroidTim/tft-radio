@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -27,10 +28,13 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -47,41 +51,49 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import de.iu.tftradio.R
 import de.iu.tftradio.data.model.PlaylistDto
 import de.iu.tftradio.data.model.Trend
 import de.iu.tftradio.presentation.ErrorScreen
+import de.iu.tftradio.presentation.viewModel.ModeratorFeedbackViewModel
 import de.iu.tftradio.presentation.viewModel.PlaylistViewModel
-import de.iu.tftradio.presentation.viewModel.UiState
+import de.iu.tftradio.presentation.viewModel.helper.UiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
+internal fun PlayList(playlistViewModel: PlaylistViewModel, moderatorFeedbackViewModel: ModeratorFeedbackViewModel, modifier: Modifier) {
     val rememberLazyListState = rememberLazyListState()
     var onTrackItem by rememberSaveable { mutableIntStateOf(0) }
     var showModeratorFeedbackDialog by rememberSaveable { mutableStateOf(false) }
     val refreshScope = rememberCoroutineScope()
     val refreshState = rememberPullToRefreshState()
     var isRefreshing by remember { mutableStateOf(false) }
+    var feedbackText by rememberSaveable { mutableStateOf("") }
     val onRefresh: () -> Unit = {
         isRefreshing = true
         refreshScope.launch {
             //For displaying the refresh logic in case of use example data
             delay(2000)
-            viewModel.loadPlaylist(getExampleData = true)
+            playlistViewModel.loadPlaylist(getExampleData = true)
             isRefreshing = false
         }
     }
-    LaunchedEffect(key1 = viewModel) {
-        viewModel.loadPlaylist(getExampleData = true)
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState(
+        skipPartiallyExpanded = false
+    )
+    LaunchedEffect(key1 = playlistViewModel) {
+        playlistViewModel.loadPlaylist(getExampleData = true)
     }
 
     Box(
         modifier = modifier.fillMaxSize()
     ) {
-        if (viewModel.errorDialog) {
+
+        if (moderatorFeedbackViewModel.errorDialog) {
             AlertDialog(
                 title = {
                     Text(text = stringResource(id = R.string.title_error_dialog))
@@ -90,11 +102,11 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
                     Text(text = stringResource(id = R.string.label_error_dialog))
                 },
                 onDismissRequest = {
-                    viewModel.errorDialog = false
+                    moderatorFeedbackViewModel.errorDialog = false
                 },
                 confirmButton = {
                     TextButton(
-                        onClick = { viewModel.errorDialog = false }
+                        onClick = { moderatorFeedbackViewModel.errorDialog = false }
                     ) {
                         Text(text = stringResource(id = R.string.ok_button))
                     }
@@ -102,15 +114,25 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
             )
         }
 
-        when (val state = viewModel.uiState.collectAsState().value) {
+        if(showBottomSheet) {
+            ModalBottomSheet(
+                modifier = Modifier.fillMaxHeight(),
+                sheetState = sheetState,
+                onDismissRequest = { showBottomSheet = false }
+            ) {
+                RatingsSection(viewModel = viewModel())
+            }
+        }
+
+        when (val state = playlistViewModel.uiState.collectAsState().value) {
             UiState.Loading -> CircularProgressIndicator(
                 modifier = Modifier
                     .fillMaxSize()
                     .wrapContentSize()
             )
 
-            is UiState.Success -> {
-                val playlist = state.playlistDto
+            is UiState.Success<*> -> {
+                val playlist = state.data as PlaylistDto
                 LaunchedEffect(key1 = playlist) {
                     playlist.playlist.forEachIndexed { index, playlistItemDto ->
                         if (playlistItemDto.onTrack) {
@@ -133,11 +155,20 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
                                     .wrapContentWidth()
                                     .padding(top = 8.dp))
                             } else {
-                                FeedbackModerator(
-                                    onClick = {
-                                        stars = it
-                                    }
-                                )
+                                Column {
+                                    FeedbackModerator(
+                                        onClick = {
+                                            stars = it
+                                        }
+                                    )
+                                    TextField(
+                                        modifier = Modifier.padding(top = 8.dp),
+                                        value = feedbackText,
+                                        onValueChange = {
+                                            feedbackText = it
+                                        }
+                                    )
+                                }
                             }
                         },
                         onDismissRequest = {
@@ -155,10 +186,16 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
                             TextButton(
                                 onClick = {
                                     isLoading = true
-                                    viewModel.setModeratorFeedback(
+                                    moderatorFeedbackViewModel.setModeratorFeedback(
                                         moderatorIdentifier = playlist.moderator.identifier,
                                         stars = stars,
+                                        comment = feedbackText,
                                         onComplete = {
+                                            it.onSuccess {
+                                                playlistViewModel.loadPlaylist(getExampleData = true, clearCache = true)
+                                            }.onFailure {
+                                                moderatorFeedbackViewModel.errorDialog = true
+                                            }
                                             isLoading = false
                                             showModeratorFeedbackDialog = false
                                         }
@@ -179,9 +216,15 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
                     Column(
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
-                        Moderator(playlist = playlist) {
-                            showModeratorFeedbackDialog = true
-                        }
+                        Moderator(
+                            playlist = playlist,
+                            onModeratorStar = {
+                                showModeratorFeedbackDialog = true
+                            },
+                            onModerator = {
+                                showBottomSheet = true
+                            }
+                        )
                         LazyColumn(
                             state = rememberLazyListState
                         ) {
@@ -205,7 +248,7 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
                                             favoriteCount += 1
                                         }
                                         isFavorite = !isFavorite
-                                        viewModel.setSongFavorite(
+                                        playlistViewModel.setSongFavorite(
                                             songIdentifier = playlistItem.identifier
                                         )
                                     }
@@ -220,7 +263,7 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
                 ErrorScreen(
                     exception = state.exception,
                     onRetry = {
-                        viewModel.loadPlaylist(getExampleData = true)
+                        playlistViewModel.loadPlaylist(getExampleData = true)
                     }
                 )
             }
@@ -229,9 +272,10 @@ internal fun PlayList(viewModel: PlaylistViewModel, modifier: Modifier) {
 }
 
 @Composable
-fun Moderator(
+private fun Moderator(
     playlist: PlaylistDto,
-    onModeratorStar: () -> Unit
+    onModeratorStar: () -> Unit,
+    onModerator: () -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -241,7 +285,9 @@ fun Moderator(
     ) {
         Text(
             text = playlist.moderator.name,
-            modifier = Modifier.padding(end = 8.dp),
+            modifier = Modifier
+                .padding(end = 8.dp)
+                .clickable(onClick = onModerator),
             style = MaterialTheme.typography.bodyMedium
         )
         ModeratorStars(
@@ -265,7 +311,7 @@ fun Moderator(
 }
 
 @Composable
-fun ModeratorStars(
+internal fun ModeratorStars(
     stars: Int,
     onClick: () -> Unit
 ) {
@@ -279,7 +325,7 @@ fun ModeratorStars(
 }
 
 @Composable
-fun FeedbackModerator(
+private fun FeedbackModerator(
     onClick: (rating: Int) -> Unit
 ) {
     var rating by rememberSaveable { mutableIntStateOf(0) }
