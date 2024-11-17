@@ -6,6 +6,7 @@ import de.iu.tftradio.data.error.NetworkException
 import de.iu.tftradio.data.model.ModeratorFeedback
 import de.iu.tftradio.data.model.ModeratorFeedbackStars
 import de.iu.tftradio.data.model.PlaylistDto
+import de.iu.tftradio.data.model.SongRequestList
 import okhttp3.OkHttpClient
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -51,8 +52,28 @@ internal class RadioNetworkProvider {
         return retrofitInstance.getModeratorFeedbackList(url = "/moderatorFeedbackList")
     }
 
+    suspend fun getRequestSongList(): Response<SongRequestList> {
+        return retrofitInstance.getSongRequestList(url = "/requestSongList")
+    }
+
+    suspend fun postSongVote(songIdentifier: String): Response<Unit> {
+        return retrofitInstance.postSongVote(url = "/requestSongVote", body = songIdentifier)
+    }
+
+    suspend fun postSongVoteOut(songIdentifier: String): Response<Unit> {
+        return retrofitInstance.postSongVoteOut(url = "/requestSongVoteOut", body = songIdentifier)
+    }
+
+    suspend fun postSongRequest(songTitle: String): Response<Unit> {
+        return retrofitInstance.postSongRequest(url = "/songTitle", body = songTitle)
+    }
+
     suspend fun postSongFavorite(songIdentifier: String): Response<Unit> {
         return retrofitInstance.postSongFavorite(url = "/songFavorite", body = songIdentifier)
+    }
+
+    suspend fun postSongFavoriteOut(songIdentifier: String): Response<Unit> {
+        return retrofitInstance.postSongFavoriteOut(url = "/songFavoriteOut", body = songIdentifier)
     }
 
     suspend fun postModeratorFeedback(moderatorFeedbackStars: ModeratorFeedbackStars): Response<Unit> {

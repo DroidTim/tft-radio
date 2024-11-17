@@ -34,7 +34,7 @@ internal fun RatingsSection(viewModel: ModeratorFeedbackViewModel) {
 
     when(val state = viewModel.uiState.collectAsState().value) {
         UiState.Loading -> CircularProgressIndicator()
-        is UiState.Success<*> -> {
+        is UiState.Success -> {
             val moderatorFeedbackList = state.data as List<*>
             LazyColumn(
                 modifier = Modifier.padding(horizontal = 16.dp)

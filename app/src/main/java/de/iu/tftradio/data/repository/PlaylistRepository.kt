@@ -28,4 +28,9 @@ internal class PlaylistRepository {
         takeIf { radioNetworkProvider.postSongFavorite(songIdentifier = songIdentifier).isSuccessful } ?: throw NetworkErrorException()
     }
 
+    @Throws(NetworkErrorException::class)
+    suspend fun postSongFavoriteOut(songIdentifier: String) {
+        takeIf { radioNetworkProvider.postSongFavoriteOut(songIdentifier = songIdentifier).isSuccessful } ?: throw NetworkErrorException()
+    }
+
 }

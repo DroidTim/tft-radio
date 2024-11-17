@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.iu.tftradio.data.model.ModeratorFeedback
 import de.iu.tftradio.data.model.ModeratorFeedbackStars
 import de.iu.tftradio.data.repository.ModeratorRepository
 import de.iu.tftradio.presentation.viewModel.helper.UiState
@@ -14,8 +15,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 internal class ModeratorFeedbackViewModel: ViewModel() {
-    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
-    val uiState: StateFlow<UiState> = _uiState
+    private val _uiState = MutableStateFlow<UiState<List<ModeratorFeedback>>>(UiState.Loading)
+    val uiState: StateFlow<UiState<List<ModeratorFeedback>>> = _uiState
 
     private val repository = ModeratorRepository()
 

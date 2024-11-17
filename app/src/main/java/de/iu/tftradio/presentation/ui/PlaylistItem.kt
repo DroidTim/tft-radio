@@ -40,15 +40,14 @@ internal fun PlaylistItem(
     album: String,
     favoriteCount: Int,
     isOnTrack: Boolean,
-    isFavorite: Boolean,
-    onFavorite: () -> Unit
+    onVote: Boolean,
+    onVoteAction: () -> Unit
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .padding(vertical = 16.dp)
             .height(200.dp),
-        onClick = { /*TODO*/ },
         border = if (isOnTrack) BorderStroke(width = 2.dp, color = MaterialTheme.colorScheme.primary) else null
     ) {
         Row(
@@ -78,8 +77,8 @@ internal fun PlaylistItem(
                 } else Box(modifier = Modifier)
                 Favorite(
                     favoriteCount = favoriteCount,
-                    isFavorite = isFavorite,
-                    onFavorite = onFavorite
+                    isFavorite = onVote,
+                    onFavorite = onVoteAction
                 )
             }
         }
@@ -168,7 +167,7 @@ fun PlayListItemPreview() {
         album = "Album",
         favoriteCount = 12,
         isOnTrack = true,
-        onFavorite = {},
-        isFavorite = true
+        onVoteAction = {},
+        onVote = true
     )
 }

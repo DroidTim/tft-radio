@@ -6,19 +6,23 @@ import com.fasterxml.jackson.annotation.JsonProperty
 @JsonIgnoreProperties
 internal data class PlaylistDto(
     @JsonProperty("moderator") val moderator: Moderator,
-    @JsonProperty("playlist") val playlist: List<PlaylistItemDto>
+    @JsonProperty("playlist") val playlist: List<SongItemDto>
 )
 
+@JsonIgnoreProperties
+internal data class SongRequestList(
+    @JsonProperty("songRequest") val songRequest: List<SongItemDto>
+)
 
 @JsonIgnoreProperties
-internal data class PlaylistItemDto(
+internal data class SongItemDto(
     @JsonProperty("identifier") val identifier: String,
     @JsonProperty("picture") val pictureSource: String,
     @JsonProperty("title") val title: String,
     @JsonProperty("album") val album: String,
     @JsonProperty("interpret") val interpret: String,
     @JsonProperty("onTrack") val onTrack: Boolean,
-    @JsonProperty("favoriteCount") val favoriteCount: Int
+    @JsonProperty("votesCount") val votesCount: Int
 )
 
 @JsonIgnoreProperties

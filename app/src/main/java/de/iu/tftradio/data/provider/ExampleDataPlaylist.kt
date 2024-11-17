@@ -2,8 +2,9 @@ package de.iu.tftradio.data.provider
 
 import de.iu.tftradio.data.model.Moderator
 import de.iu.tftradio.data.model.PlaylistDto
-import de.iu.tftradio.data.model.PlaylistItemDto
+import de.iu.tftradio.data.model.SongItemDto
 import de.iu.tftradio.data.model.ModeratorFeedback
+import de.iu.tftradio.data.model.SongRequestList
 import de.iu.tftradio.data.model.Trend
 
 internal data class ExampleDataPlaylist(
@@ -15,59 +16,120 @@ internal data class ExampleDataPlaylist(
             trend = Trend.POSITIV
         ),
         playlist = listOf(
-            PlaylistItemDto(
+            SongItemDto(
                 identifier = "2314343dfsa",
                 pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
                 title = "Song Title 1",
                 album = "Album Name 1",
                 interpret = "Artist 1",
                 onTrack = false,
-                favoriteCount = 23
+                votesCount = 23
             ),
-            PlaylistItemDto(
+            SongItemDto(
                 identifier = "2314243ffsa",
                 pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
                 title = "Song Title 2",
                 album = "Album Name 2",
                 interpret = "Artist 2",
                 onTrack = false,
-                favoriteCount = 26
+                votesCount = 26
             ),
-            PlaylistItemDto(
+            SongItemDto(
                 identifier = "d314343dfsb",
                 pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
                 title = "Song Title 3",
                 album = "Album Name 3",
                 interpret = "Artist 3",
                 onTrack = false,
-                favoriteCount = 2
+                votesCount = 2
             ),
-            PlaylistItemDto(
+            SongItemDto(
                 identifier = "23a7343dfea",
                 pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
                 title = "Song Title 4",
                 album = "Album Name 4",
                 interpret = "Artist 4",
                 onTrack = true,
-                favoriteCount = 76
+                votesCount = 76
             ),
-            PlaylistItemDto(
+            SongItemDto(
                 identifier = "2314321adsa",
                 pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
                 title = "Song Title 5",
                 album = "Album Name 5",
                 interpret = "Artist 5",
                 onTrack = false,
-                favoriteCount = 0
+                votesCount = 0
             ),
-            PlaylistItemDto(
+            SongItemDto(
                 identifier = "2df4343dkua",
                 pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
                 title = "Song Title 6",
                 album = "Album Name 6",
                 interpret = "Artist 6",
                 onTrack = false,
-                favoriteCount = 90
+                votesCount = 90
+            )
+        )
+    )
+)
+
+internal data class ExampleRequestSongList(
+    val songRequest: SongRequestList = SongRequestList(
+        songRequest = listOf(
+            SongItemDto(
+                identifier = "2314343dfsa",
+                pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
+                title = "Song Title 1",
+                album = "Album Name 1",
+                interpret = "Artist 1",
+                onTrack = false,
+                votesCount = 423
+            ),
+            SongItemDto(
+                identifier = "2314243ffsa",
+                pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
+                title = "Song Title 2",
+                album = "Album Name 2",
+                interpret = "Artist 2",
+                onTrack = false,
+                votesCount = 326
+            ),
+            SongItemDto(
+                identifier = "d314343dfsb",
+                pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
+                title = "Song Title 3",
+                album = "Album Name 3",
+                interpret = "Artist 3",
+                onTrack = false,
+                votesCount = 324
+            ),
+            SongItemDto(
+                identifier = "23a7343dfea",
+                pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
+                title = "Song Title 4",
+                album = "Album Name 4",
+                interpret = "Artist 4",
+                onTrack = true,
+                votesCount = 176
+            ),
+            SongItemDto(
+                identifier = "2314321adsa",
+                pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
+                title = "Song Title 5",
+                album = "Album Name 5",
+                interpret = "Artist 5",
+                onTrack = false,
+                votesCount = 99
+            ),
+            SongItemDto(
+                identifier = "2df4343dkua",
+                pictureSource = "https://mh-2-bildagentur.panthermedia.net/images/cms/Landingpage-Category-Nature/Icon-Fruehling.jpg",
+                title = "Song Title 6",
+                album = "Album Name 6",
+                interpret = "Artist 6",
+                onTrack = false,
+                votesCount = 0
             )
         )
     )

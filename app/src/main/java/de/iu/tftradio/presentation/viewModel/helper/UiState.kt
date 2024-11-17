@@ -1,9 +1,9 @@
 package de.iu.tftradio.presentation.viewModel.helper
 
-internal sealed class UiState {
-    data class Success<T>(
+internal sealed interface UiState<out T> {
+    class Success<T>(
         val data: T
-    ): UiState()
-    data class Failure(val exception: Throwable) : UiState()
-    data object Loading : UiState()
+    ): UiState<T>
+    class Failure<T>(val exception: Throwable) : UiState<T>
+    data object Loading : UiState<Nothing>
 }

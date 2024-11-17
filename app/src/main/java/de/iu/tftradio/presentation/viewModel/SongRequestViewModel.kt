@@ -1,29 +1,65 @@
 package de.iu.tftradio.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import de.iu.tftradio.data.model.SongRequestList
+import de.iu.tftradio.data.repository.SongRequestRepository
+import de.iu.tftradio.presentation.viewModel.helper.UiState
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-
-data class SongRequest(val title: String, var favorites: Int = 0)
+import kotlinx.coroutines.launch
 
 internal class SongRequestViewModel : ViewModel() {
-    private val _songRequestList = MutableStateFlow<List<SongRequest>>(emptyList())
-    val songRequestList: StateFlow<List<SongRequest>> = _songRequestList
+    private val _uiState = MutableStateFlow<UiState<SongRequestList>>(UiState.Loading)
+    val uiState: StateFlow<UiState<SongRequestList>> = _uiState
 
-    fun loadSongRequest() {
+    private val repository = SongRequestRepository()
 
-    }
-    // Methode, um einen neuen Songwunsch hinzuzufügen
-    fun addSongRequest(newRequest: String) {
-        if (newRequest.isNotBlank()) {
-            _songRequestList.value += SongRequest(newRequest)
+    var hasError: Boolean = false
+
+    fun loadPlaylist(getExampleData: Boolean = false, clearCache: Boolean = false) {
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                if (getExampleData) repository.getSongRequestExample() else repository.getSongRequestList(clearCache = clearCache)
+            }.onSuccess { songRequestList ->
+                _uiState.value = UiState.Success(data = songRequestList)
+            }.onFailure { error ->
+                _uiState.value = UiState.Failure(exception = error)
+            }
         }
     }
 
-    // Methode, um einen Song als Favorit zu markieren
-    fun favoriteSong(request: SongRequest) {
-        _songRequestList.value = _songRequestList.value.map {
-            if (it == request) it.copy(favorites = it.favorites + 1) else it
-        }.sortedByDescending { it.favorites }
+    fun postSongVote(songIdentifier: String, isVote: Boolean) {
+        var isSuccessful = false
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                while (!isSuccessful) {
+                    if (isVote) {
+                        repository.postSongVote(songIdentifier = songIdentifier)
+                    } else {
+                        repository.postSongVoteOut(songIdentifier = songIdentifier)
+                    }
+                }
+            }.onSuccess {
+                isSuccessful = true
+            }.onFailure {
+                delay(5000)
+            }
+        }
     }
+
+    fun postSongRequest(songTitle: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            runCatching {
+                repository.postSongRequest(songTitle = songTitle)
+            }.onSuccess {
+                loadPlaylist(clearCache = true)
+            }.onFailure {
+                hasError = true
+            }
+        }
+    }
+
 }

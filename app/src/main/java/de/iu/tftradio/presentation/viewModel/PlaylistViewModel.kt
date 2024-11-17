@@ -2,6 +2,7 @@ package de.iu.tftradio.presentation.viewModel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import de.iu.tftradio.data.model.PlaylistDto
 import de.iu.tftradio.data.repository.PlaylistRepository
 import de.iu.tftradio.presentation.viewModel.helper.UiState
 import kotlinx.coroutines.Dispatchers
@@ -11,8 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 internal class PlaylistViewModel : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState>(UiState.Loading)
-    val uiState: StateFlow<UiState> = _uiState
+    private val _uiState = MutableStateFlow<UiState<PlaylistDto>>(UiState.Loading)
+    val uiState: StateFlow<UiState<PlaylistDto>> = _uiState
 
     private val repository = PlaylistRepository()
 
@@ -28,15 +29,19 @@ internal class PlaylistViewModel : ViewModel() {
         }
     }
 
-    fun setSongFavorite(songIdentifier: String) {
+    fun setSongFavorite(songIdentifier: String, isFavorite: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
             var isSuccessful = false
             while (!isSuccessful) {
                 runCatching {
-                    repository.postSongFavorite(songIdentifier = songIdentifier)
+                    if (!isFavorite) {
+                        repository.postSongFavorite(songIdentifier = songIdentifier)
+                    } else {
+                        repository.postSongFavoriteOut(songIdentifier = songIdentifier)
+                    }
                 }.onSuccess {
                     isSuccessful = true
-                    _uiState.value = UiState.Success(data = repository.getPlaylist(clearCache = true))
+                    // Don't reload the list. If you want this you have to remember the scrolling position. This gives conflicts with the scrolling to the played title.
                 }.onFailure {
                     delay(5000)
                 }

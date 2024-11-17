@@ -2,69 +2,97 @@ package de.iu.tftradio.presentation.ui
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowForward
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
+import de.iu.tftradio.R
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import de.iu.tftradio.presentation.viewModel.SongRequest
+import de.iu.tftradio.data.model.SongRequestList
 import de.iu.tftradio.presentation.viewModel.SongRequestViewModel
-import kotlinx.coroutines.launch
+import de.iu.tftradio.presentation.viewModel.helper.UiState
 
 @Composable
-internal fun SongRequest(modifier: Modifier = Modifier, songRequestViewModel: SongRequestViewModel) {
-    val songRequestList by songRequestViewModel.songRequestList.collectAsState()
-    var currentSongRequest by remember { mutableStateOf(TextFieldValue("")) }
-    val scope = rememberCoroutineScope()
+internal fun SongRequest(modifier: Modifier, songRequestViewModel: SongRequestViewModel) {
 
-    Column(modifier = modifier.padding(16.dp).fillMaxSize()) {
-        Text("Songwunsch eingeben:", style = MaterialTheme.typography.titleMedium)
+    LaunchedEffect(key1 = songRequestViewModel) {
+        songRequestViewModel.loadPlaylist(getExampleData = true)
+    }
+
+    when (val state = songRequestViewModel.uiState.collectAsState().value) {
+        UiState.Loading -> CircularProgressIndicator()
+        is UiState.Success -> {
+            SongRequest(modifier = modifier, requestSongRequestList = state.data, songRequestViewModel = songRequestViewModel)
+        }
+
+        is UiState.Failure -> {
+
+        }
+    }
+
+}
+
+@Composable
+private fun SongRequest(
+    modifier: Modifier,
+    requestSongRequestList: SongRequestList,
+    songRequestViewModel: SongRequestViewModel
+) {
+    var currentTitle by remember { mutableStateOf("") }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    Column(
+        modifier = modifier
+            .padding(16.dp)
+            .fillMaxSize()
+    ) {
+        Text(text = stringResource(id = R.string.subtitle_song_request_title), style = MaterialTheme.typography.titleMedium)
 
         TextField(
-            value = currentSongRequest,
-            onValueChange = { currentSongRequest = it },
+            value = TextFieldValue(currentTitle),
+            onValueChange = { currentTitle = it.text },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(8.dp)
                 .background(Color.LightGray),
-            placeholder = { Text("Songwunsch eingeben") },
+            placeholder = { Text(text = stringResource(id = R.string.input_field_song_request_title)) },
             trailingIcon = {
                 IconButton(
                     onClick = {
-                        scope.launch {
-                            songRequestViewModel.addSongRequest(currentSongRequest.text)
-                            currentSongRequest = TextFieldValue("")
-                        }
+                        songRequestViewModel.postSongRequest(songTitle = currentTitle)
+                        currentTitle = ""
+                        keyboardController?.hide()
+                        songRequestViewModel.loadPlaylist(getExampleData = true)
                     }
                 ) {
                     Icon(
-                        imageVector = Icons.Filled.ArrowForward,
-                        contentDescription = "Senden",
+                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                        contentDescription = stringResource(id = R.string.input_field_song_request_send_button_description),
                         tint = MaterialTheme.colorScheme.primary
                     )
                 }
@@ -76,48 +104,46 @@ internal fun SongRequest(modifier: Modifier = Modifier, songRequestViewModel: So
         Text("Songwünsche:", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Liste der Songwünsche anzeigen und nach Favoriten sortieren
-        SongRequestList(songRequests = songRequestList, onFavoriteClick = { song ->
-            songRequestViewModel.favoriteSong(song)
-        })
+        SongRequestList(
+            requestSongRequestList = requestSongRequestList,
+            songRequestViewModel = songRequestViewModel
+        )
     }
 }
 
-
 @Composable
-private fun SongRequestList(songRequests: List<SongRequest>, onFavoriteClick: (SongRequest) -> Unit) {
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        songRequests.forEach { songRequest ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
-                    .background(Color(0xFFF0F0F0))
-                    .padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "${songRequest.title} (${songRequest.favorites} Favoriten)",
-                    modifier = Modifier.weight(1f),
-                    style = MaterialTheme.typography.bodyMedium
-                )
-                IconButton(onClick = { onFavoriteClick(songRequest) }) {
-                    if (songRequest.favorites > 0) {
-                        Icon(
-                            imageVector = Icons.Filled.Favorite,
-                            contentDescription = "Favorisieren",
-                            tint = Color.Red
-                        )
+private fun SongRequestList(
+    requestSongRequestList: SongRequestList,
+    songRequestViewModel: SongRequestViewModel
+) {
+    LazyColumn {
+        items(requestSongRequestList.songRequest) { songItem ->
+            var isVote by rememberSaveable { mutableStateOf(false) }
+            var votesCount by rememberSaveable { mutableIntStateOf(songItem.votesCount) }
+            PlaylistItem(
+                modifier = Modifier,
+                url = songItem.pictureSource,
+                interpret = songItem.interpret,
+                title = songItem.title,
+                album = songItem.album,
+                favoriteCount = votesCount,
+                isOnTrack = false,
+                onVote = isVote,
+                onVoteAction = {
+                    //same user behavior as Instagram
+                    if (isVote) {
+                        votesCount -= 1
                     } else {
-                        Icon(
-                            imageVector = Icons.Filled.FavoriteBorder,
-                            contentDescription = "Favorisieren",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
+                        votesCount += 1
                     }
+                    isVote = !isVote
+                    songRequestViewModel.postSongVote(
+                        songIdentifier = songItem.identifier,
+                        isVote = isVote
+                    )
                 }
-            }
-            HorizontalDivider()
+            )
         }
     }
 }
+

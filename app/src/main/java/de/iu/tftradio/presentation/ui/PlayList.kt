@@ -53,7 +53,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.iu.tftradio.R
-import de.iu.tftradio.data.model.PlaylistDto
+import de.iu.tftradio.data.model.Moderator
 import de.iu.tftradio.data.model.Trend
 import de.iu.tftradio.presentation.ErrorScreen
 import de.iu.tftradio.presentation.viewModel.ModeratorFeedbackViewModel
@@ -131,8 +131,8 @@ internal fun PlayList(playlistViewModel: PlaylistViewModel, moderatorFeedbackVie
                     .wrapContentSize()
             )
 
-            is UiState.Success<*> -> {
-                val playlist = state.data as PlaylistDto
+            is UiState.Success -> {
+                val playlist = state.data
                 LaunchedEffect(key1 = playlist) {
                     playlist.playlist.forEachIndexed { index, playlistItemDto ->
                         if (playlistItemDto.onTrack) {
@@ -217,7 +217,7 @@ internal fun PlayList(playlistViewModel: PlaylistViewModel, moderatorFeedbackVie
                         modifier = Modifier.padding(horizontal = 16.dp)
                     ) {
                         Moderator(
-                            playlist = playlist,
+                            moderator = playlist.moderator,
                             onModeratorStar = {
                                 showModeratorFeedbackDialog = true
                             },
@@ -230,7 +230,7 @@ internal fun PlayList(playlistViewModel: PlaylistViewModel, moderatorFeedbackVie
                         ) {
                             items(playlist.playlist) { playlistItem ->
                                 var isFavorite by rememberSaveable { mutableStateOf(false) }
-                                var favoriteCount by rememberSaveable { mutableIntStateOf(playlistItem.favoriteCount) }
+                                var favoriteCount by rememberSaveable { mutableIntStateOf(playlistItem.votesCount) }
                                 PlaylistItem(
                                     modifier = Modifier,
                                     url = playlistItem.pictureSource,
@@ -239,8 +239,8 @@ internal fun PlayList(playlistViewModel: PlaylistViewModel, moderatorFeedbackVie
                                     album = playlistItem.album,
                                     favoriteCount = favoriteCount,
                                     isOnTrack = playlistItem.onTrack,
-                                    isFavorite = isFavorite,
-                                    onFavorite = {
+                                    onVote = isFavorite,
+                                    onVoteAction = {
                                         //same user behavior as Instagram
                                         if (isFavorite) {
                                             favoriteCount -= 1
@@ -249,7 +249,8 @@ internal fun PlayList(playlistViewModel: PlaylistViewModel, moderatorFeedbackVie
                                         }
                                         isFavorite = !isFavorite
                                         playlistViewModel.setSongFavorite(
-                                            songIdentifier = playlistItem.identifier
+                                            songIdentifier = playlistItem.identifier,
+                                            isFavorite = isFavorite
                                         )
                                     }
                                 )
@@ -273,7 +274,7 @@ internal fun PlayList(playlistViewModel: PlaylistViewModel, moderatorFeedbackVie
 
 @Composable
 private fun Moderator(
-    playlist: PlaylistDto,
+    moderator: Moderator,
     onModeratorStar: () -> Unit,
     onModerator: () -> Unit
 ) {
@@ -284,23 +285,23 @@ private fun Moderator(
         horizontalArrangement = Arrangement.End
     ) {
         Text(
-            text = playlist.moderator.name,
+            text = moderator.name,
             modifier = Modifier
                 .padding(end = 8.dp)
                 .clickable(onClick = onModerator),
             style = MaterialTheme.typography.bodyMedium
         )
         ModeratorStars(
-            stars = playlist.moderator.stars,
+            stars = moderator.stars,
             onClick = onModeratorStar
         )
         Image(
-            imageVector = when (playlist.moderator.trend) {
+            imageVector = when (moderator.trend) {
                 Trend.NEGATIV -> Icons.Default.ArrowDownward
                 Trend.POSITIV -> Icons.Default.ArrowUpward
                 Trend.EQUAL -> Icons.AutoMirrored.Filled.ArrowForward
             },
-            colorFilter = when (playlist.moderator.trend) {
+            colorFilter = when (moderator.trend) {
                 Trend.NEGATIV -> ColorFilter.tint(color = Color.Red)
                 Trend.POSITIV -> ColorFilter.tint(color = Color.Green)
                 Trend.EQUAL -> ColorFilter.tint(color = Color.Magenta)
@@ -373,8 +374,8 @@ fun PlayListPreview(modifier: Modifier = Modifier) {
                 album = "Album",
                 favoriteCount = 12,
                 isOnTrack = true,
-                onFavorite = {},
-                isFavorite = true
+                onVoteAction = {},
+                onVote = true
             )
         }
         item {
@@ -386,8 +387,8 @@ fun PlayListPreview(modifier: Modifier = Modifier) {
                 album = "Album",
                 favoriteCount = 12,
                 isOnTrack = false,
-                onFavorite = {},
-                isFavorite = true
+                onVoteAction = {},
+                onVote = true
             )
         }
         item {
@@ -399,8 +400,8 @@ fun PlayListPreview(modifier: Modifier = Modifier) {
                 album = "Album",
                 favoriteCount = 12,
                 isOnTrack = false,
-                onFavorite = {},
-                isFavorite = true
+                onVoteAction = {},
+                onVote = true
             )
         }
         item {
@@ -412,8 +413,8 @@ fun PlayListPreview(modifier: Modifier = Modifier) {
                 album = "Album",
                 favoriteCount = 12,
                 isOnTrack = false,
-                onFavorite = {},
-                isFavorite = true
+                onVoteAction = {},
+                onVote = true
             )
         }
         item {
@@ -425,8 +426,8 @@ fun PlayListPreview(modifier: Modifier = Modifier) {
                 album = "Album",
                 favoriteCount = 12,
                 isOnTrack = false,
-                onFavorite = {},
-                isFavorite = true
+                onVoteAction = {},
+                onVote = true
             )
         }
     }

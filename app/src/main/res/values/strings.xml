@@ -6,6 +6,9 @@
     <string name="try_again_message">Versuchen Sie es später nocheinmal</string>
     <string name="retry_button_text">Erneut Versuchen</string>
     <string name="title_dialog_moderator_feedback">Ihr Feedback</string>
+    <string name="subtitle_song_request_title">Songwunsch</string>
+    <string name="input_field_song_request_title">Titel eingeben</string>
+    <string name="input_field_song_request_send_button_description">Senden</string>
     <string name="cancel_button">Abbrechen</string>
     <string name="confirm_button">Übernehmen</string>
     <string name="title_error_dialog">Aktion nicht möglich</string>
