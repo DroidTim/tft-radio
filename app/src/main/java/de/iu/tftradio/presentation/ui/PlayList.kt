@@ -1,5 +1,6 @@
 package de.iu.tftradio.presentation.ui
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -48,6 +49,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -85,7 +87,10 @@ internal fun PlayList(playlistViewModel: PlaylistViewModel, moderatorFeedbackVie
     val sheetState = rememberModalBottomSheetState(
         skipPartiallyExpanded = false
     )
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = playlistViewModel) {
+        playlistViewModel.initialize(sharedPreferences = context.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE))
         playlistViewModel.loadPlaylist(getExampleData = true)
     }
 
@@ -229,7 +234,7 @@ internal fun PlayList(playlistViewModel: PlaylistViewModel, moderatorFeedbackVie
                             state = rememberLazyListState
                         ) {
                             items(playlist.playlist) { playlistItem ->
-                                var isFavorite by rememberSaveable { mutableStateOf(false) }
+                                var isFavorite by rememberSaveable { mutableStateOf(playlistViewModel.getSongVoted(playlistItem.identifier)) }
                                 var favoriteCount by rememberSaveable { mutableIntStateOf(playlistItem.votesCount) }
                                 PlaylistItem(
                                     modifier = Modifier,
@@ -247,11 +252,11 @@ internal fun PlayList(playlistViewModel: PlaylistViewModel, moderatorFeedbackVie
                                         } else {
                                             favoriteCount += 1
                                         }
-                                        isFavorite = !isFavorite
                                         playlistViewModel.setSongFavorite(
                                             songIdentifier = playlistItem.identifier,
                                             isFavorite = isFavorite
                                         )
+                                        isFavorite = !isFavorite
                                     }
                                 )
                             }
@@ -292,7 +297,7 @@ private fun Moderator(
             style = MaterialTheme.typography.bodyMedium
         )
         ModeratorStars(
-            stars = moderator.stars,
+            stars = moderator.averageRating,
             onClick = onModeratorStar
         )
         Image(

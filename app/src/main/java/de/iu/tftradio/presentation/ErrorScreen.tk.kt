@@ -2,6 +2,7 @@ package de.iu.tftradio.presentation
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -36,17 +37,14 @@ internal fun ErrorScreen(exception: Throwable, onRetry: () -> Unit) {
     }
 
 
-    Column(
+    LazyColumn(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.SpaceBetween,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.weight(1f)
-        ) {
+        item {
             // Icon
             Image(
                 painter = errorImage,
@@ -56,7 +54,9 @@ internal fun ErrorScreen(exception: Throwable, onRetry: () -> Unit) {
                     .size(180.dp)
                     .padding(bottom = 16.dp)
             )
+        }
 
+        item {
             // Large text
             Text(
                 text = stringResource(id = R.string.error_message),
@@ -68,7 +68,9 @@ internal fun ErrorScreen(exception: Throwable, onRetry: () -> Unit) {
                     .padding(bottom = 10.dp)
                     .padding(top = 60.dp)
             )
+        }
 
+        item {
             // Smaller text
             Text(
                 text = errorMessage,
@@ -77,7 +79,9 @@ internal fun ErrorScreen(exception: Throwable, onRetry: () -> Unit) {
                 textAlign = TextAlign.Center,
                 modifier = Modifier.padding(bottom = 50.dp)
             )
+        }
 
+        item {
             // Retry Button
             Button(
                 onClick = onRetry,
@@ -87,21 +91,23 @@ internal fun ErrorScreen(exception: Throwable, onRetry: () -> Unit) {
             }
         }
 
-        when (exception.localizedMessage) {
-            is String -> {
-                //Description
-                Text(
-                    text = exception.localizedMessage ?: "",
-                    fontSize = 10.sp,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.padding(bottom = 8.dp)
-                )
+        item {
+            when (exception.localizedMessage) {
+                is String -> {
+                    //Description
+                    Text(
+                        text = exception.localizedMessage ?: "",
+                        fontSize = 10.sp,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(bottom = 8.dp)
+                    )
+                }
             }
         }
     }
-}
 
+}
 
 @Preview
 @Composable

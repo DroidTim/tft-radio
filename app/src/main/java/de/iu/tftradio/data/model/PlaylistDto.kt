@@ -29,7 +29,7 @@ internal data class SongItemDto(
 internal data class Moderator(
     @JsonProperty("identifier") val identifier: String,
     @JsonProperty("name") val name: String,
-    @JsonProperty("stars") val stars: Int,
+    @JsonProperty("averageRating") val averageRating: Int,
     @JsonProperty("trend") val trend: Trend
 )
 

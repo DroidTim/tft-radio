@@ -12,7 +12,7 @@ internal data class ExampleDataPlaylist(
         moderator = Moderator(
             identifier = "8974343d293",
             name = "John Doe",
-            stars = 3,
+            averageRating = 3,
             trend = Trend.POSITIV
         ),
         playlist = listOf(
@@ -59,7 +59,7 @@ internal data class ExampleDataPlaylist(
                 album = "Album Name 5",
                 interpret = "Artist 5",
                 onTrack = false,
-                votesCount = 0
+                votesCount = 3
             ),
             SongItemDto(
                 identifier = "2df4343dkua",
@@ -129,7 +129,7 @@ internal data class ExampleRequestSongList(
                 album = "Album Name 6",
                 interpret = "Artist 6",
                 onTrack = false,
-                votesCount = 0
+                votesCount = 2
             )
         )
     )

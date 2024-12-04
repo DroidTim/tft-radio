@@ -1,15 +1,20 @@
 package de.iu.tftradio.data.repository
 
 import android.accounts.NetworkErrorException
+import android.content.SharedPreferences
 import de.iu.tftradio.data.model.SongRequestList
+import de.iu.tftradio.data.model.SongRequestVotes
 import de.iu.tftradio.data.provider.ExampleRequestSongList
 import de.iu.tftradio.data.provider.RadioMemoryProvider
 import de.iu.tftradio.data.provider.RadioNetworkProvider
 
-internal class SongRequestRepository {
+internal class SongRequestRepository(
+    val sharedPreferences: SharedPreferences
+) {
 
     private val radioNetworkProvider = RadioNetworkProvider()
     private val radioMemoryProvider = RadioMemoryProvider<SongRequestList>()
+    private val songRequestVotes = SongRequestVotes(sharedPreferences = sharedPreferences)
 
     @Throws(NetworkErrorException::class)
     suspend fun getSongRequestList(clearCache: Boolean = false): SongRequestList {
@@ -21,6 +26,18 @@ internal class SongRequestRepository {
 
     fun getSongRequestExample(): SongRequestList {
         return ExampleRequestSongList().songRequest
+    }
+
+    fun getVotedSongs(): List<String> {
+        return songRequestVotes.getVotes()
+    }
+
+    fun setVote(songIdentifier: String) {
+        songRequestVotes.setVote(songIdentifier = songIdentifier)
+    }
+
+    fun removeVote(songIdentifier: String) {
+        songRequestVotes.removeVote(songIdentifier = songIdentifier)
     }
 
     @Throws(NetworkErrorException::class)

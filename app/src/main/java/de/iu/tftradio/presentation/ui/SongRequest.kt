@@ -1,5 +1,6 @@
 package de.iu.tftradio.presentation.ui
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -29,6 +30,7 @@ import de.iu.tftradio.R
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
@@ -40,7 +42,10 @@ import de.iu.tftradio.presentation.viewModel.helper.UiState
 @Composable
 internal fun SongRequest(modifier: Modifier, songRequestViewModel: SongRequestViewModel) {
 
+    val context = LocalContext.current
+
     LaunchedEffect(key1 = songRequestViewModel) {
+        songRequestViewModel.initialize(sharedPreferences = context.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE))
         songRequestViewModel.loadPlaylist(getExampleData = true)
     }
 
@@ -72,7 +77,6 @@ private fun SongRequest(
             .fillMaxSize()
     ) {
         Text(text = stringResource(id = R.string.subtitle_song_request_title), style = MaterialTheme.typography.titleMedium)
-
         TextField(
             value = TextFieldValue(currentTitle),
             onValueChange = { currentTitle = it.text },
@@ -98,12 +102,9 @@ private fun SongRequest(
                 }
             }
         )
-
         Spacer(modifier = Modifier.height(32.dp))
-
         Text("Songwünsche:", style = MaterialTheme.typography.titleLarge)
         Spacer(modifier = Modifier.height(16.dp))
-
         SongRequestList(
             requestSongRequestList = requestSongRequestList,
             songRequestViewModel = songRequestViewModel
@@ -118,7 +119,7 @@ private fun SongRequestList(
 ) {
     LazyColumn {
         items(requestSongRequestList.songRequest) { songItem ->
-            var isVote by rememberSaveable { mutableStateOf(false) }
+            var isVote by rememberSaveable { mutableStateOf(songRequestViewModel.getSongVoted(songIdentifier = songItem.identifier)) }
             var votesCount by rememberSaveable { mutableIntStateOf(songItem.votesCount) }
             PlaylistItem(
                 modifier = Modifier,
@@ -136,11 +137,11 @@ private fun SongRequestList(
                     } else {
                         votesCount += 1
                     }
-                    isVote = !isVote
                     songRequestViewModel.postSongVote(
                         songIdentifier = songItem.identifier,
                         isVote = isVote
                     )
+                    isVote = !isVote
                 }
             )
         }

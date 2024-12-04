@@ -1,5 +1,6 @@
 package de.iu.tftradio.presentation.viewModel
 
+import android.content.SharedPreferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import de.iu.tftradio.data.model.SongRequestList
@@ -15,7 +16,11 @@ internal class SongRequestViewModel : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<SongRequestList>>(UiState.Loading)
     val uiState: StateFlow<UiState<SongRequestList>> = _uiState
 
-    private val repository = SongRequestRepository()
+    private lateinit var repository : SongRequestRepository
+
+    fun initialize(sharedPreferences: SharedPreferences) {
+        repository = SongRequestRepository(sharedPreferences = sharedPreferences)
+    }
 
     var hasError: Boolean = false
 
@@ -31,6 +36,10 @@ internal class SongRequestViewModel : ViewModel() {
         }
     }
 
+    fun getSongVoted(songIdentifier: String): Boolean {
+        return repository.getVotedSongs().any { songIdentifier == it }
+    }
+
     fun postSongVote(songIdentifier: String, isVote: Boolean) {
         var isSuccessful = false
         viewModelScope.launch(Dispatchers.IO) {
@@ -44,6 +53,11 @@ internal class SongRequestViewModel : ViewModel() {
                 }
             }.onSuccess {
                 isSuccessful = true
+                if (!isVote) {
+                    repository.setVote(songIdentifier = songIdentifier)
+                } else {
+                    repository.removeVote(songIdentifier = songIdentifier)
+                }
             }.onFailure {
                 delay(5000)
             }
