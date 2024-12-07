@@ -90,21 +90,6 @@ internal fun ErrorScreen(exception: Throwable, onRetry: () -> Unit) {
                 Text(text = stringResource(id = R.string.retry_button_text))
             }
         }
-
-        item {
-            when (exception.localizedMessage) {
-                is String -> {
-                    //Description
-                    Text(
-                        text = exception.localizedMessage ?: "",
-                        fontSize = 10.sp,
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.4f),
-                        textAlign = TextAlign.Center,
-                        modifier = Modifier.padding(bottom = 8.dp)
-                    )
-                }
-            }
-        }
     }
 
 }

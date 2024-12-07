@@ -23,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.res.stringResource
 import de.iu.tftradio.R
@@ -60,7 +61,7 @@ class MainActivity : ComponentActivity() {
                                         tab = Tab.SONG_LIST
                                     },
                                     icon = {
-                                        Image(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = "Playlist")
+                                        Image(imageVector = Icons.AutoMirrored.Filled.List, contentDescription = "Playlist", colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary))
                                     }
                                 )
                                 NavigationBarItem(
@@ -69,7 +70,7 @@ class MainActivity : ComponentActivity() {
                                         tab = Tab.SONG_REQUEST
                                     },
                                     icon = {
-                                        Image(imageVector = Icons.Default.QueuePlayNext, contentDescription = "Feedback")
+                                        Image(imageVector = Icons.Default.QueuePlayNext, contentDescription = "Feedback", colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary))
                                     }
                                 )
                             }

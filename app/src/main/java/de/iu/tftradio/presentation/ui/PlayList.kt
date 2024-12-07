@@ -325,7 +325,7 @@ internal fun ModeratorStars(
         modifier = Modifier.clickable(onClick = onClick)
     ) {
         for (i in 1..5) {
-            Image(imageVector = if (i <= stars) Icons.Default.Star else Icons.Default.StarOutline, contentDescription = "Star $i")
+            Image(imageVector = if (i <= stars) Icons.Default.Star else Icons.Default.StarOutline, contentDescription = "Star $i", colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary))
         }
     }
 }
@@ -348,7 +348,8 @@ private fun FeedbackModerator(
                         Icons.Default.Star
                     } else Icons.Default.StarOutline,
                     contentDescription = "Star $i",
-                    modifier = Modifier.size(40.dp)
+                    modifier = Modifier.size(40.dp),
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
         }
