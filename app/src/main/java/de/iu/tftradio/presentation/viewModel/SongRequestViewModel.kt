@@ -24,7 +24,7 @@ internal class SongRequestViewModel : ViewModel() {
 
     var hasError: Boolean = false
 
-    fun loadPlaylist(getExampleData: Boolean = false, clearCache: Boolean = false) {
+    fun loadSongRequests(getExampleData: Boolean = false, clearCache: Boolean = false) {
         viewModelScope.launch(Dispatchers.IO) {
             runCatching {
                 if (getExampleData) repository.getSongRequestExample() else repository.getSongRequestList(clearCache = clearCache)
@@ -51,6 +51,7 @@ internal class SongRequestViewModel : ViewModel() {
                         repository.postSongVoteOut(songIdentifier = songIdentifier)
                     }
                 }
+                loadSongRequests(clearCache = true)
             }.onSuccess {
                 isSuccessful = true
                 if (!isVote) {
@@ -69,7 +70,7 @@ internal class SongRequestViewModel : ViewModel() {
             runCatching {
                 repository.postSongRequest(songTitle = songTitle)
             }.onSuccess {
-                loadPlaylist(clearCache = true)
+                loadSongRequests(clearCache = true)
             }.onFailure {
                 hasError = true
             }

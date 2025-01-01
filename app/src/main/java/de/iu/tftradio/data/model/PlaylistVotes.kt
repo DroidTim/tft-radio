@@ -1,6 +1,7 @@
 package de.iu.tftradio.data.model
 
 import android.content.SharedPreferences
+import de.iu.tftradio.data.provider.Votes
 
 internal const val VOTED_SONG_IDENTIFIER = "VOTED_SONG_IDENTIFIER"
 

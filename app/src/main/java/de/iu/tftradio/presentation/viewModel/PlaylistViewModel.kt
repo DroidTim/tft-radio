@@ -56,7 +56,6 @@ internal class PlaylistViewModel: ViewModel() {
                     } else {
                         repository.removeVote(songIdentifier = songIdentifier)
                     }
-
                     // Don't reload the list. If you want this you have to remember the scrolling position. This gives conflicts with the scrolling to the played title.
                 }.onFailure {
                     delay(5000)

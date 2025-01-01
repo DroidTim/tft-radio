@@ -46,7 +46,7 @@ internal fun SongRequest(modifier: Modifier, songRequestViewModel: SongRequestVi
 
     LaunchedEffect(key1 = songRequestViewModel) {
         songRequestViewModel.initialize(sharedPreferences = context.getSharedPreferences("PREFERENCES", Context.MODE_PRIVATE))
-        songRequestViewModel.loadPlaylist(getExampleData = true)
+        songRequestViewModel.loadSongRequests(getExampleData = true)
     }
 
     when (val state = songRequestViewModel.uiState.collectAsState().value) {
@@ -91,7 +91,7 @@ private fun SongRequest(
                         songRequestViewModel.postSongRequest(songTitle = currentTitle)
                         currentTitle = ""
                         keyboardController?.hide()
-                        songRequestViewModel.loadPlaylist(getExampleData = true)
+                        songRequestViewModel.loadSongRequests(getExampleData = true)
                     }
                 ) {
                     Icon(

@@ -3,7 +3,7 @@ package de.iu.tftradio.data.repository
 import android.accounts.NetworkErrorException
 import android.content.SharedPreferences
 import de.iu.tftradio.data.model.SongRequestList
-import de.iu.tftradio.data.model.SongRequestVotes
+import de.iu.tftradio.data.provider.SongRequestVotes
 import de.iu.tftradio.data.provider.ExampleRequestSongList
 import de.iu.tftradio.data.provider.RadioMemoryProvider
 import de.iu.tftradio.data.provider.RadioNetworkProvider

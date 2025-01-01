@@ -1,4 +1,4 @@
-package de.iu.tftradio.data.model
+package de.iu.tftradio.data.provider
 
 interface Votes {
 
