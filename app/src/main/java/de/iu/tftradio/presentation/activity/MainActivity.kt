@@ -29,7 +29,6 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.res.stringResource
 import com.mikepenz.aboutlibraries.ui.compose.m3.LibrariesContainer
-import com.mikepenz.aboutlibraries.ui.compose.m3.rememberLibraries
 import de.iu.tftradio.R
 import de.iu.tftradio.presentation.model.Tab
 import de.iu.tftradio.presentation.theme.TftradioTheme
@@ -80,7 +79,7 @@ class MainActivity : ComponentActivity() {
                                 NavigationBarItem(
                                     selected = false,
                                     onClick = {
-                                        tab = Tab.License
+                                        tab = Tab.LICENSE
                                     },
                                     icon = {
                                         Image(imageVector = Icons.Default.LibraryAddCheck, contentDescription = "Lizenzen", colorFilter = ColorFilter.tint(color = MaterialTheme.colorScheme.primary))
@@ -92,7 +91,7 @@ class MainActivity : ComponentActivity() {
                         when(tab) {
                             Tab.SONG_LIST -> PlayList(playlistViewModel = viewModel(), moderatorFeedbackViewModel = viewModel(), modifier = Modifier.padding(innerPadding))
                             Tab.SONG_REQUEST -> SongRequest(songRequestViewModel = viewModel(), modifier = Modifier.padding(innerPadding))
-                            Tab.License -> License(modifier = Modifier.padding(innerPadding))
+                            Tab.LICENSE -> License(modifier = Modifier.padding(innerPadding))
                         }
                     }
                 }
