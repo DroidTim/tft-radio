@@ -1,4 +1,5 @@
 plugins {
+    id("com.mikepenz.aboutlibraries.plugin") version "11.2.3"
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
 }
@@ -47,6 +48,7 @@ android {
 }
 
 dependencies {
+    implementation(libs.about.library)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.compose.lifecycle)
