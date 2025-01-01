@@ -105,6 +105,7 @@ fun PreviewErrorScreen() {
     ) {
         ErrorScreen(
             exception = ArithmeticException("Ein Fehler ist aufgetreten, tut uns Leid"),
-            onRetry = {})
+            onRetry = {}
+        )
     }
 }
